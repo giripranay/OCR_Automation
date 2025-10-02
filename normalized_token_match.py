@@ -1,15 +1,24 @@
 import os
 import json
 import cv2
+import re
+import string
 
 def normalize_text(text):
-    return text.strip().upper()
+    """Normalize OCR text by removing punctuation, extra spaces, and uppercasing."""
+    if not text:
+        return ""
+    # Remove punctuation and symbols except alphanumeric
+    text = re.sub(rf"[{re.escape(string.punctuation)}]", "", text)
+    # Collapse whitespace
+    text = " ".join(text.split())
+    return text.upper()
 
 def extract_google_tokens(data):
     """Extract tokens from Google Vision OCR JSON"""
     tokens = []
     for page in data.get("pages", []):
-        for token in page:  # Adjust if your structure is different
+        for token in page:  # adjust if structure is different
             tokens.append({
                 "text": normalize_text(token.get("word", "")),
                 "bounding_box": token.get("bounding_box", {})
@@ -111,6 +120,6 @@ unmatched_output_folder = r"H:\\OCR_Automation\\unmatched"
 report = process_files(azurefolder, googlefolder, imagefolder, unmatched_output_folder)
 
 for result in report:
-    print(result["file"], result["matched_tokens"], result["unmatched_tokens"],
+    print(result["file"], 
           f"{result['match_percentage']:.2f}%")
  
