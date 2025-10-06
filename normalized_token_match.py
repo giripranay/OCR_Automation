@@ -3,6 +3,7 @@ import json
 import cv2
 import re
 import string
+from dotenv import load_dotenv
 
 def normalize_text(text):
     """Normalize OCR text by removing punctuation, extra spaces, and uppercasing."""
@@ -32,16 +33,27 @@ def extract_azure_tokens(data):
 def compare_tokens(google_tokens, azure_token_set):
     unmatched = []
     matched_count = 0
+    
+    # Define punctuation set
+    punctuation_set = set(string.punctuation)
+
     for token in google_tokens:
+        
+# Skip token if it's only punctuation
+        if all(char in punctuation_set for char in token["text"]):
+            continue
+            matched_count += 1
+
         if token["text"] in azure_token_set:
             matched_count += 1
         else:
             unmatched.append(token)
+            print(token['text'])
 
     total = len(google_tokens)
     match_percentage = (matched_count / total) * 100 if total > 0 else 0
     unmatch_percentage = 100 - match_percentage
-
+    print("-------------------------------")
     return unmatched, match_percentage, unmatch_percentage
 
 def draw_unmatched_boxes(image_path, unmatched_tokens, output_path):
@@ -111,11 +123,22 @@ def process_files(azure_folder, google_folder, image_folder, unmatched_output_fo
     return results
 
 
-# Example usage
-azurefolder = r"H:\\OCR_Automation\\infrrd_ocr_data"
-googlefolder = r"H:\\OCR_Automation\\GOOGLE_VISION_OCR"
-imagefolder = r"H:\\OCR_Automation\\infrrd_input_samples"
-unmatched_output_folder = r"H:\\OCR_Automation\\unmatched"
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Read folder paths from environment variables
+azurefolder = os.getenv("AZURE_JSON_FOLDER")
+googlefolder = os.getenv("GOOGLE_JSON_FOLDER")
+imagefolder = os.getenv("IMAGE_FOLDER_PATH")
+unmatched_output_folder = os.getenv("UNMATCHED_OUTPUT_FOLDER")
+unmatched_tokens = os.getenv("UNMATCHED_TOKENS")
+
+# Validate paths
+if not all([azurefolder, googlefolder, imagefolder, unmatched_output_folder]):
+    print("❌ Error: One or more folder paths are missing in the .env file.")
+    exit(1)
+
 
 report = process_files(azurefolder, googlefolder, imagefolder, unmatched_output_folder)
 

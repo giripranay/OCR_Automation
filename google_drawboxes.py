@@ -3,11 +3,22 @@ import json
 import cv2
 import numpy as np
 
-# Set your folder paths
-folder_path = "H:\\OCR_Automation\\GOOGLE_VISION_OCR"
-image_folder = "H:\\OCR_Automation\\infrrd_input_samples"
-text_folder = "H:\\OCR_Automation\\TEXT_OCR"
-output_folder = os.path.join(image_folder, "google")
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Read folder paths from environment variables
+folder_path = os.getenv("GOOGLE_JSON_FOLDER")
+image_folder = os.getenv("GOOGLE_IMAGE_FOLDER")
+text_folder = os.getenv("GOOGLE_TEXT_FOLDER")
+
+# Validate paths
+if not all([folder_path, image_folder, text_folder]):
+    print("Error: One or more folder paths are missing in the .env file.")
+    exit(1)
+
+output_folder = os.path.join(image_folder, "google_boxes")
 text_output_folder = os.path.join(text_folder, "google_text")
 # Create output folders if they don't exist
 os.makedirs(output_folder, exist_ok=True)

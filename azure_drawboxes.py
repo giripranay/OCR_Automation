@@ -1,11 +1,22 @@
 import os
 import json
 import cv2
+from dotenv import load_dotenv
 
-# Set your folder paths
-folder_path = "H:\\OCR_Automation\\infrrd_ocr_data"
-image_folder = "H:\\OCR_Automation\\infrrd_input_samples"
-text_folder = "H:\\OCR_Automation\\TEXT_OCR"
+# Load environment variables from .env file
+load_dotenv()
+
+# Read folder paths from environment variables
+folder_path = os.getenv("AZURE_JSON_FOLDER")
+image_folder = os.getenv("AZURE_IMAGE_FOLDER")
+text_folder = os.getenv("AZURE_TEXT_FOLDER")
+
+
+# Validate paths
+if not all([folder_path, image_folder, text_folder]):
+    print("Error: One or more folder paths are missing in the .env file.")
+    exit(1)
+
 output_folder = os.path.join(image_folder, "azure_boxes")
 text_output_folder = os.path.join(text_folder, "azure_text")
 
