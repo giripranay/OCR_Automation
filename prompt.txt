@@ -1,0 +1,59 @@
+You are an OCR validation assistant. 
+Your goal is to check mismatched tokens between two OCR systems (Azure OCR vs Google OCR) 
+and determine if they affect critical fields in the document. 
+Be precise and structured in your reasoning.
+
+Here is the OCR validation context.
+ 
+Full Azure OCR Reconstructed Text:
+<<<AZURE_TEXT>>>
+ 
+Full Google OCR Reconstructed Text:
+<<<GOOGLE_TEXT>>>
+ 
+Unmatched Tokens (from Google not found in Azure):
+<<<UNMATCHED_TOKENS_LIST>>>
+ 
+Critical Fields to Validate:
+1. Policy Number
+2. Collateral ID (VIN)
+3. Loan Number
+4. Policy Holder Name
+5. Policy Holder Address
+ 
+Task:
+- Check if any of the unmatched tokens could correspond to or impact these critical fields. 
+- Highlight potential mismatches in these fields.
+- Generate clear pointers for the testing team on which areas need closer manual validation.
+- If tokens are not related to critical fields, explicitly say they are safe to ignore.
+- Respond in JSON with structure:
+ 
+{
+  "impacted_fields": [
+      {
+        "field": "<Critical Field Name>",
+        "unmatched_tokens": ["..."],
+        "explanation": "<reason why this mismatch matters>"
+      }
+  ],
+  "safe_tokens": ["..."],
+  "testing_team_pointers": [
+      "Pointer 1",
+      "Pointer 2"
+  ]
+}
+
+
+How to load prompt from txt and fill it with contextual data from other programs.
+
+
+I have a folder containing images and folder containing raw ocr jsons. 
+
+googleOCR.py : process images folder to do ocr.
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Perform Google Vision OCR on JPG images in a folder.")
+    parser.add_argument("folder", help="Path to the folder containing JPG images")
+    args = parser.parse_args()
+
+    process_folder(args.folder)
+
