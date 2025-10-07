@@ -142,7 +142,18 @@ if not all([azurefolder, googlefolder, imagefolder, unmatched_output_folder]):
 
 report = process_files(azurefolder, googlefolder, imagefolder, unmatched_output_folder)
 
+os.makedirs(unmatched_tokens, exist_ok=True)
+
+
+# Save unmatched token texts to individual .txt files
 for result in report:
-    print(result["file"], 
-          f"{result['match_percentage']:.2f}%")
- 
+    file_name = os.path.splitext(result["file"])[0] + ".txt"
+    file_path = os.path.join(unmatched_tokens, file_name)
+
+    # Extract unmatched token texts and join them by commas
+    token_texts = [token["text"] for token in result["unmatched_details"]]
+    joined_text = ", ".join(token_texts)
+
+    # Write to file
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(joined_text)

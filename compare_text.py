@@ -2,8 +2,8 @@ import os
 from difflib import SequenceMatcher
 
 # Define the paths to the two folders
-azure_folder = "H:\\OCR_Automation\\TEXT_OCR\\azure_text"
-google_folder = "H:\\OCR_Automation\\TEXT_OCR\\google"
+azure_folder = "H:\\OCR_Automation\\FULLTEXT_OCR\\azure_text"
+google_folder = "H:\\OCR_Automation\\FULLTEXT_OCR\\google"
 
 # Check if both folders exist
 if not os.path.exists(azure_folder):
